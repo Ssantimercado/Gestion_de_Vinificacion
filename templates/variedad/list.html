@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Listado de Variedades de Uva{% endblock %}
+
+{% block content %}
+  <h1>Listado de Variedades de Uva</h1>
+  <a href="{{ url_for('variedad.agregar_variedad') }}" class="btn btn-primary">Agregar Nueva Variedad</a>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Origen</th>
+        <th>Foto</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variedad in variedades %}
+      <tr>
+        <td>{{ variedad.id }}</td>
+        <td>{{ variedad.nombre }}</td>
+        <td>{{ variedad.origen }}</td>
+        <td>
+          {% if variedad.foto %}
+            <img src="{{ url_for('static', filename=variedad.foto) }}" alt="{{ variedad.nombre }}" style="max-width: 50px; max-height: 50px;">
+          {% else %}
+            Sin foto
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('variedad.editar_variedad', id=variedad.id) }}" class="btn btn-sm btn-warning">Editar</a>
+          <a href="{{ url_for('variedad.eliminar_variedad', id=variedad.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta variedad?')">Eliminar</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
