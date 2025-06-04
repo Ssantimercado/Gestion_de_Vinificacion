@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '451433203SANGERPA'
 app.config['UPLOAD_FOLDER'] = 'uploads/fotos_variedades'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Leoncio0@127.0.0.1:3306/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Leoncio0@127.0.0.1:3306/bodega'
 
 # Ruta para servir imágenes subidas
 @app.route('/uploads/<filename>')
@@ -18,10 +18,15 @@ def uploaded_file(filename):
 db.init_app(app)
 migrate = Migrate(app, db)
 
+<<<<<<< HEAD
 # Registrar Blueprints
 from routes.variedad import variedad_bp
 from routes.crianza_routes import crianza_bp
 from routes.embotellado_routes import embotellado_bp
+=======
+# Inicializar Flask-Migrate con la aplicación y la instancia db
+migrate = Migrate(app, db)  # <--- Asegúrate de que esté ACA
+>>>>>>> 60270e69e107609fb2adad83790211a694504f66
 
 app.register_blueprint(variedad_bp)
 app.register_blueprint(crianza_bp)
