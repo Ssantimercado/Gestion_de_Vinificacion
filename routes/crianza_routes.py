@@ -1,37 +1,35 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for
 from models.db import db
 from models.crianza_models import Crianza
-from models.fermentacion import Fermentacion
-from datetime import datetime
+import datetime
 
-crianza_bp = Blueprint('crianza', __name__, url_prefix='/crianza')
+crianza_bp = Blueprint('crianza', __name__)
 
-@crianza_bp.route('/')
-def lista_crianza():
-    crianzas = Crianza.query.all()
-    return render_template('crianza/lista.html', crianzas=crianzas)
-
-@crianza_bp.route('/nueva', methods=['GET', 'POST'])
-def nueva_crianza():
+@crianza_bp.route('/crianza/nueva', methods=['GET', 'POST'])
+def crear_crianza():
     if request.method == 'POST':
-        fecha_inicio = request.form.get('fecha_inicio')
-        fecha_fin = request.form.get('fecha_fin') or None
-        tipo_recipient = request.form.get('tipo_recipient')
-        observaciones = request.form.get('observaciones')
-        fermentacion_id = request.form.get('fermentacion_id')
+        fecha_inicio = request.form['fecha_inicio']
+        fecha_fin = request.form['fecha_fin']
+        tipo_recipient = request.form['tipo_recipient']
+        observaciones = request.form['observaciones']
+        fermentacion_id = request.form['fermentacion_id']
 
-        nueva = Crianza(
-            fecha_inicio=datetime.strptime(fecha_inicio, '%Y-%m-%d'),
-            fecha_fin=datetime.strptime(fecha_fin, '%Y-%m-%d') if fecha_fin else None,
+        nueva_crianza = Crianza(
+            fecha_inicio=datetime.datetime.strptime(fecha_inicio, "%Y-%m-%d").date(),
+            fecha_fin=datetime.datetime.strptime(fecha_fin, "%Y-%m-%d").date() if fecha_fin else None,
             tipo_recipient=tipo_recipient,
             observaciones=observaciones,
             fermentacion_id=fermentacion_id
         )
 
-        db.session.add(nueva)
+        db.session.add(nueva_crianza)
         db.session.commit()
-        flash('Crianza registrada con éxito.')
-        return redirect(url_for('crianza.lista_crianza'))
+        return redirect(url_for('crianza.listar_crianza'))  # Ruta que muestra la lista
 
-    fermentaciones = Fermentacion.query.all()
-    return render_template('crianza/form.html', fermentaciones=fermentaciones)
+    return render_template('crianza/form.html')
+
+@crianza_bp.route('/crianza')
+def listar_crianza():
+    crianzas = Crianza.query.all()
+    return render_template('crianza/lista.html', crianzas=crianzas)
+
