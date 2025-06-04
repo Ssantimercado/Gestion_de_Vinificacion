@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    <div class="mb-3">
+      {{ form.nombre.label(class="form-label") }}
+      {{ form.nombre(class="form-control") }}
+      {% if form.nombre.errors %}
+        <ul class="errors">
+          {% for error in form.nombre.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <div class="mb-3">
+      {{ form.origen.label(class="form-label") }}
+      {{ form.origen(class="form-control") }}
+      {% if form.origen.errors %}
+        <ul class="errors">
+          {% for error in form.origen.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+    <div class="mb-3">
+      {{ form.foto.label(class="form-label") }}
+      {{ form.foto(class="form-control") }}
+      {% if form.foto.errors %}
+        <ul class="errors">
+          {% for error in form.foto.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if form.foto.data %}
+        <img src="#" alt="Vista previa" style="max-width: 100px; max-height: 100px;">
+      {% endif %}
+    </div>
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('variedad.listar_variedades') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+{% endblock %}
