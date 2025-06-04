@@ -6,7 +6,7 @@ from flask_migrate import Migrate  # <--- Importa Migrate
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '451433203SANGERPA'
 app.config['UPLOAD_FOLDER'] = 'uploads/fotos_variedades'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Leoncio0@127.0.0.1:3306/flask_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Leoncio0@127.0.0.1:3306/bodega'
 
 # Configurar la ruta estática para la carpeta de subidas
 app.add_url_rule('/uploads/<filename>', endpoint='uploaded_file', build_only=True)
@@ -24,7 +24,7 @@ app.register_blueprint(variedad_bp)
 db.init_app(app)
 
 # Inicializar Flask-Migrate con la aplicación y la instancia db
-migrate = Migrate(app, db)  # <--- Asegúrate de que esté AQUÍ
+migrate = Migrate(app, db)  # <--- Asegúrate de que esté ACA
 
 if __name__ == '__main__':
     app.run(debug=True)
