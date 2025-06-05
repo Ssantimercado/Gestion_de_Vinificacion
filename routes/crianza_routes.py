@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from models.db import db
 from models.crianza_models import Crianza
-from models.variedad import Variedad
-from models.fermetacion import Fermetacion
+from models.variedad import VariedadUva
+from models.fermentacion import Fermentacion
 import datetime
 
 crianza_bp = Blueprint('crianza', __name__)
@@ -55,7 +55,7 @@ def buscar_crianza():
 
         resultados = query.all()
 
-    variedades = Variedad.query.all()
+    variedades = VariedadUva.query.all()
     return render_template('crianza/buscador.html', resultados=resultados,
                            tipo_recipient=tipo_recipient, variedad_id=variedad_id,
                            variedades=variedades)
