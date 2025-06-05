@@ -1,4 +1,3 @@
-
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_wtf import FlaskForm
 from wtforms import IntegerField, DateField, TextAreaField, SelectField
@@ -9,7 +8,7 @@ from models.db import db
 
 # Definir el formulario dentro de este archivo
 class FermentacionForm(FlaskForm):
-    recepcion_id = SelectField('Recepción', coerce=int, validators=[DataRequired()])
+    recepcion_id = SelectField('Recepción', coerce=str, validators=[DataRequired()])  # Aseguramos que reciba un str (UUID)
     fecha_inicio = DateField('Fecha de Inicio', validators=[DataRequired()])
     fecha_fin = DateField('Fecha de Fin', validators=[DataRequired()])
     temperatura = IntegerField('Temperatura (°C)', validators=[DataRequired()])

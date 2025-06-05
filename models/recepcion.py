@@ -1,18 +1,22 @@
 import uuid
 from datetime import datetime
 from models.db import db
+from flask_sqlalchemy import SQLAlchemy
+from models.variedad import VariedadUva  # Importa correctamente el modelo
+
+db = SQLAlchemy()
 
 class RecepcionUva(db.Model):
     __tablename__ = 'recepciones'
-
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4))  # Cambié el tipo de campo a String(36) y agregué UUID
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))  # UUID como clave primaria
     fecha = db.Column(db.Date, nullable=False)
     cantidad_kg = db.Column(db.Integer, nullable=False)
     notas = db.Column(db.Text)
+
+    variedad_id = db.Column(db.String(36), db.ForeignKey('variedades.id'))  # Relación con UUID de VariedadUva
+    variedad = db.relationship('VariedadUva', backref='recepciones')  # Relación inversa
     
-    # Relación con VariedadUva
-    variedad_id = db.Column(db.Integer, db.ForeignKey('variedades.id'), nullable=False)
-    variedad = db.relationship('VariedadUva', backref=db.backref('recepciones', lazy=True))
+    fermentaciones = db.relationship('Fermentacion', back_populates='recepcion', cascade="all, delete-orphan")
 
     def __init__(self, fecha, cantidad_kg, notas, variedad_id):
         self.fecha = fecha
