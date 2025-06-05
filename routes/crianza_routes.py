@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from models.db import db
 from models.crianza_models import Crianza
+from models.variedad import Variedad
+from models.fermetacion import Fermetacion
 import datetime
 
 crianza_bp = Blueprint('crianza', __name__)
@@ -33,3 +35,27 @@ def listar_crianza():
     crianzas = Crianza.query.all()
     return render_template('crianza/lista.html', crianzas=crianzas)
 
+@crianza_bp.route('/buscar', methods=['GET', 'POST'])
+def buscar_crianza():
+    resultados = []
+    tipo_recipient = ""
+    variedad_id = ""
+
+    if request.method == 'POST':
+        tipo_recipient = request.form.get('tipo_recipient', '')
+        variedad_id = request.form.get('variedad_id', '')
+
+        # Filtrado
+        query = Crianza.query.join(Crianza.fermentacion).join(Fermentacion.variedad)
+
+        if tipo_recipient:
+            query = query.filter(Crianza.tipo_recipient.ilike(f"%{tipo_recipient}%"))
+        if variedad_id:
+            query = query.filter(Fermentacion.variedad_id == variedad_id)
+
+        resultados = query.all()
+
+    variedades = Variedad.query.all()
+    return render_template('crianza/buscador.html', resultados=resultados,
+                           tipo_recipient=tipo_recipient, variedad_id=variedad_id,
+                           variedades=variedades)
