@@ -1,0 +1,32 @@
+<!-- templates/recepcion/list.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Lista de Recepciones</h1>
+<a href="{{ url_for('recepcion_bp.nueva_recepcion') }}" class="btn btn-primary">Nueva Recepción</a>
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Variedad</th>
+            <th>Cantidad (kg)</th>
+            <th>Notas</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for recepcion in recepciones %}
+        <tr>
+            <td>{{ recepcion.fecha }}</td>
+            <td>{{ recepcion.variedad.nombre }}</td>
+            <td>{{ recepcion.cantidad_kg }}</td>
+            <td>{{ recepcion.notas }}</td>
+            <td>
+                <a href="{{ url_for('recepcion_bp.editar_recepcion', id=recepcion.id) }}" class="btn btn-warning btn-sm">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

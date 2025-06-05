@@ -1,29 +1,24 @@
 import uuid
+from datetime import datetime
 from models.db import db
 
 class RecepcionUva(db.Model):
-    __tablename__ = 'recepciones_uva'
+    __tablename__ = 'recepciones'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4))  # Cambié el tipo de campo a String(36) y agregué UUID
     fecha = db.Column(db.Date, nullable=False)
-    variedad_id = db.Column(db.String(36), db.ForeignKey('variedades_uva.id'), nullable=False)
-    cantidad_kg = db.Column(db.Float, nullable=False)
+    cantidad_kg = db.Column(db.Integer, nullable=False)
     notas = db.Column(db.Text)
+    
+    # Relación con VariedadUva
+    variedad_id = db.Column(db.Integer, db.ForeignKey('variedades.id'), nullable=False)
+    variedad = db.relationship('VariedadUva', backref=db.backref('recepciones', lazy=True))
 
-    variedad = db.relationship("VariedadUva", back_populates="recepciones")
-    fermentaciones = db.relationship("Fermentacion", back_populates="recepcion", cascade="all, delete-orphan")
-
-    def __init__(self, fecha, variedad_id, cantidad_kg, notas=None):
+    def __init__(self, fecha, cantidad_kg, notas, variedad_id):
         self.fecha = fecha
-        self.variedad_id = variedad_id
         self.cantidad_kg = cantidad_kg
         self.notas = notas
+        self.variedad_id = variedad_id
 
-    def serialize(self):
-        return {
-            'id': self.id,
-            'fecha': str(self.fecha),
-            'variedad_id': self.variedad_id,
-            'cantidad_kg': self.cantidad_kg,
-            'notas': self.notas
-        }
+    def __repr__(self):
+        return f'<RecepcionUva {self.id} - {self.fecha} - {self.variedad.nombre}>'

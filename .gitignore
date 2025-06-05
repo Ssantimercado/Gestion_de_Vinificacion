@@ -1,3 +1,5 @@
 .env
 Gestion_de_Vinificacion/
 
+env/
+__pycache__
