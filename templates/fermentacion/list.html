@@ -1,0 +1,25 @@
+<!-- templates/fermentacion/list.html -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Fermentaciones</title>
+</head>
+<body>
+    <h1>Lista de Fermentaciones</h1>
+
+    <a href="{{ url_for('fermentacion_bp.nueva_fermentacion') }}">Nueva Fermentación</a>
+
+    <ul>
+        {% for fermentacion in fermentaciones %}
+            <li>
+                {{ fermentacion.fecha_inicio }} - {{ fermentacion.temperatura }}°C - {{ fermentacion.ph }} pH
+                <a href="{{ url_for('fermentacion_bp.editar_fermentacion', id=fermentacion.id) }}">Editar</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
