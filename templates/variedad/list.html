@@ -23,14 +23,17 @@
         <td>{{ variedad.origen }}</td>
         <td>
           {% if variedad.foto %}
-            <img src="{{ url_for('static', filename=variedad.foto) }}" alt="{{ variedad.nombre }}" style="max-width: 50px; max-height: 50px;">
+            <img src="{{ url_for('static', filename='fotos_variedades/' + variedad.foto) }}" alt="{{ variedad.nombre }}" style="max-width: 50px; max-height: 50px;">
           {% else %}
             Sin foto
           {% endif %}
         </td>
         <td>
           <a href="{{ url_for('variedad.editar_variedad', id=variedad.id) }}" class="btn btn-sm btn-warning">Editar</a>
-          <a href="{{ url_for('variedad.eliminar_variedad', id=variedad.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta variedad?')">Eliminar</a>
+          
+          <form action="{{ url_for('variedad.eliminar_variedad', id=variedad.id) }}" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta variedad?')">Eliminar</button>
+          </form>
         </td>
       </tr>
       {% endfor %}

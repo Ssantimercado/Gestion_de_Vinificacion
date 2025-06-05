@@ -1,0 +1,81 @@
+/* style.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa; 
+    color: #343a40; 
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #6a002b; 
+    padding: 10px 20px;
+    color: white;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+.container {
+    max-width: 960px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.variedad-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.variedad-card img {
+    width: 100px; /* Tamaño de la imagen en el listado */
+    height: 100px;
+    object-fit: cover; /* Para que la imagen cubra el espacio sin distorsionarse */
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.btn {
+    background-color: #8c0032; /* rojo vino para botones */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background-color: #5c0022;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
