@@ -1,0 +1,34 @@
+<!-- templates/recepcion/form.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ titulo }}</h1>
+
+<form method="POST" action="{{ url_for('recepcion_bp.' + ('nueva_recepcion' if not form.id.data else 'editar_recepcion', id=form.id.data)) }}">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+        <label for="variedad_id">Variedad</label>
+        {{ form.variedad_id(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="cantidad_kg">Cantidad (kg)</label>
+        {{ form.cantidad_kg(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="fecha">Fecha de Recepción</label>
+        {{ form.fecha(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+        <label for="notas">Notas</label>
+        {{ form.notas(class="form-control") }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">{{ 'Guardar' if not form.id.data else 'Actualizar' }}</button>
+</form>
+
+{% endblock %}

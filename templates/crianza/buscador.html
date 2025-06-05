@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Buscar Crianza</h2>
+    <form method="POST" class="row g-3">
+        <div class="col-md-6">
+            <label for="tipo_recipient" class="form-label">Tipo de Recipiente</label>
+            <input type="text" class="form-control" name="tipo_recipient" value="{{ tipo_recipient }}">
+        </div>
+        <div class="col-md-6">
+            <label for="variedad_id" class="form-label">Variedad de Uva</label>
+            <select class="form-select" name="variedad_id">
+                <option value="">Todas</option>
+                {% for variedad in variedades %}
+                <option value="{{ variedad.id }}" {% if variedad.id==variedad_id %}selected{% endif %}>
+                    {{ variedad.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+
+    {% if resultados %}
+    <h4 class="mt-4">Resultados</h4>
+    <table class="table table-bordered mt-2">
+        <thead>
+            <tr>
+                <th>Fecha Inicio</th>
+                <th>Tipo Recipiente</th>
+                <th>Observaciones</th>
+                <th>Variedad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for crianza in resultados %}
+            <tr>
+                <td>{{ crianza.fecha_inicio }}</td>
+                <td>{{ crianza.tipo_recipient }}</td>
+                <td>{{ crianza.observaciones }}</td>
+                <td>{{ crianza.fermentacion.variedad.nombre }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

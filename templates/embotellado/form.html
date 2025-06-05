@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Embotellado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="mb-4">Registrar Embotellado</h2>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha</label>
+                <input type="date" class="form-control" name="fecha" id="fecha" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="cantidad_botellas" class="form-label">Cantidad de Botellas</label>
+                <input type="number" class="form-control" name="cantidad_botellas" id="cantidad_botellas" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="crianza_id" class="form-label">Crianza Asociada</label>
+                <select class="form-control" name="crianza_id" id="crianza_id" required>
+                    {% for c in crianzas %}
+                    <option value="{{ c.id }}">ID: {{ c.id }} - Tipo Recipiente: {{ c.tipo_recipient }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar Embotellado</button>
+            <a href="{{ url_for('embotellado.lista_embotellado') }}" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+</body>
+
+</html>

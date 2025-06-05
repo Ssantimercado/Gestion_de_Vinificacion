@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Crianzas</h2>
+    <a href="{{ url_for('crianza.crear_crianza') }}" class="btn btn-success mb-3">Nueva Crianza</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Recipiente</th>
+                <th>Observaciones</th>
+                <th>Fermentación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in crianzas %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.fecha_inicio }}</td>
+                <td>{{ c.fecha_fin or '—' }}</td>
+                <td>{{ c.tipo_recipient }}</td>
+                <td>{{ c.observaciones or '—' }}</td>
+                <td>{{ c.fermentacion_id }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
