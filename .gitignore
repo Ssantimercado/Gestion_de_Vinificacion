@@ -4,4 +4,4 @@ env/
 
 Gestion_de_Vinificacion/
 
-env/
+.env
