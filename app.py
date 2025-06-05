@@ -1,7 +1,7 @@
 # app.py
 
 import os
-from flask import Flask, render_template, redirect, url_for, send_from_directory
+from flask import Flask, render_template, redirect, url_for, send_from_directory # Asegúrate que redirect y url_for estén aquí
 from extensions import db             # Importa 'db' desde extensions.py
 from dotenv import load_dotenv        # Importa para cargar .env
 
@@ -42,10 +42,14 @@ app.register_blueprint(variedad_bp)
 # --- Rutas Principales de la Aplicación ---
 @app.route('/')
 def index():
-    return render_template('index.html') # Asumiendo que tienes un index.html en tu carpeta templates
+    # Redirige la raíz a la URL de la lista de variedades
+    # Asegúrate que 'variedad.lista_variedades' sea el nombre de la función
+    # en tu Blueprint de 'variedad' que muestra la lista.
+    return redirect(url_for('variedad.listar_variedades'))
 
 # --- Ejecución de la Aplicación ---
 if __name__ == '__main__':
+    # Si no usas Flask-Migrate, esta línea es CRUCIAL para crear las tablas
     # en tu base de datos MySQL al iniciar la aplicación por primera vez.
     # Asegúrate de que tu MySQL esté corriendo y que la base de datos 'bodega' exista.
     with app.app_context():
