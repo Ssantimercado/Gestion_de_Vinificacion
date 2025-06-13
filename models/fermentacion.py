@@ -11,7 +11,7 @@ class Fermentacion(db.Model):
 
     fecha_inicio = db.Column(db.Date, nullable=False, default=datetime.date.today) # Default si no se especifica
     fecha_fin = db.Column(db.Date, nullable=True) # Puede ser nula al principio
-    temperatura_max = db.Column(db.Numeric(5, 2), nullable=False)
+    temperatura = db.Column(db.Float, nullable=False) #Lo modifique por la base de datos
     levadura_utilizada = db.Column(db.String(100), nullable=True)
     ph_inicial = db.Column(db.Numeric(4, 2), nullable=True)
     ph_final = db.Column(db.Numeric(4, 2), nullable=True)

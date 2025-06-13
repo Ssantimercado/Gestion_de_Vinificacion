@@ -1,50 +1,121 @@
-<!-- templates/fermentacion/form.html -->
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ titulo }}</title>
-</head>
-<body>
-    <h1>{{ titulo }}</h1>
+{% block title %}{{ titulo }}{% endblock %}
 
-    <form method="POST">
-        {{ form.hidden_tag() }}
-
-        <div>
-            <label for="recepcion_id">Recepción</label>
-            {{ form.recepcion_id(class="form-control") }}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">{{ titulo }}</h2>
         </div>
+        <div class="card-body">
+            <form method="POST" action="">
+                {{ form.csrf_token }}
+                
+                <div class="form-group mb-3">
+                    <label for="recepcion_id" class="form-label">Recepción:</label>
+                    {{ form.recepcion_id(class="form-control") }}
+                    {% if form.recepcion_id.errors %}
+                        <div class="text-danger">
+                            {% for error in form.recepcion_id.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
 
-        <div>
-            <label for="fecha_inicio">Fecha de Inicio</label>
-            {{ form.fecha_inicio(class="form-control") }}
+                <div class="form-group mb-3">
+                    <label for="fecha_inicio" class="form-label">Fecha de Inicio:</label>
+                    {{ form.fecha_inicio(class="form-control", type="date") }}
+                    {% if form.fecha_inicio.errors %}
+                        <div class="text-danger">
+                            {% for error in form.fecha_inicio.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="fecha_fin" class="form-label">Fecha de Fin:</label>
+                    {{ form.fecha_fin(class="form-control", type="date") }}
+                    {% if form.fecha_fin.errors %}
+                        <div class="text-danger">
+                            {% for error in form.fecha_fin.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="temperatura" class="form-label">Temperatura (°C):</label>
+                    {{ form.temperatura(class="form-control", type="number", step="0.1") }} {# Usar type="number" y step para floats #}
+                    {% if form.temperatura.errors %}
+                        <div class="text-danger">
+                            {% for error in form.temperatura.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="levadura_utilizada" class="form-label">Levadura Utilizada:</label>
+                    {{ form.levadura_utilizada(class="form-control") }}
+                    {% if form.levadura_utilizada.errors %}
+                        <div class="text-danger">
+                            {% for error in form.levadura_utilizada.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="ph_inicial" class="form-label">pH Inicial:</label>
+                    {{ form.ph_inicial(class="form-control", type="number", step="0.01") }} {# Usar type="number" y step para floats #}
+                    {% if form.ph_inicial.errors %}
+                        <div class="text-danger">
+                            {% for error in form.ph_inicial.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="ph_final" class="form-label">pH Final:</label>
+                    {{ form.ph_final(class="form-control", type="number", step="0.01") }} {# Usar type="number" y step para floats #}
+                    {% if form.ph_final.errors %}
+                        <div class="text-danger">
+                            {% for error in form.ph_final.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="densidad_inicial" class="form-label">Densidad Inicial:</label>
+                    {{ form.densidad_inicial(class="form-control", type="number", step="0.001") }} {# Usar type="number" y step para floats #}
+                    {% if form.densidad_inicial.errors %}
+                        <div class="text-danger">
+                            {% for error in form.densidad_inicial.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="densidad_final" class="form-label">Densidad Final:</label>
+                    {{ form.densidad_final(class="form-control", type="number", step="0.001") }} {# Usar type="number" y step para floats #}
+                    {% if form.densidad_final.errors %}
+                        <div class="text-danger">
+                            {% for error in form.densidad_final.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="notas" class="form-label">Notas:</label>
+                    {{ form.notas(class="form-control", rows="3") }}
+                    {% if form.notas.errors %}
+                        <div class="text-danger">
+                            {% for error in form.notas.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="{{ url_for('fermentacion_bp.lista_fermentaciones') }}" class="btn btn-secondary">Cancelar</a>
+            </form>
         </div>
-
-        <div>
-            <label for="fecha_fin">Fecha de Fin</label>
-            {{ form.fecha_fin(class="form-control") }}
-        </div>
-
-        <div>
-            <label for="temperatura">Temperatura (°C)</label>
-            {{ form.temperatura(class="form-control") }}
-        </div>
-
-        <div>
-            <label for="ph">pH</label>
-            {{ form.ph(class="form-control") }}
-        </div>
-
-        <div>
-            <label for="notas">Notas</label>
-            {{ form.notas(class="form-control") }}
-        </div>
-
-        <button type="submit">Guardar</button>
-    </form>
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 # models/variedad.py
 
 from sqlalchemy import Column, String
-from extensions import db # <--- Importamos 'db' desde extensions.py
+from extensions import db #  Importamos 'db' desde extensions.py
 import uuid
 
 class VariedadUva(db.Model):

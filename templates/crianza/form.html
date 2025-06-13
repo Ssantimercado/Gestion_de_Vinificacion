@@ -1,31 +1,91 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ titulo }}{% endblock %} {# Asumiendo que 'titulo' se pasa desde la ruta #}
+
 {% block content %}
 <div class="container mt-4">
-    <h2>Nueva Crianza</h2>
-    <form method="POST">
-        <div class="mb-3">
-            <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
-            <input type="date" class="form-control" name="fecha_inicio" required>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">{{ titulo }}</h2> {# Usamos 'titulo' aquí también #}
         </div>
-        <div class="mb-3">
-            <label for="fecha_fin" class="form-label">Fecha de Fin</label>
-            <input type="date" class="form-control" name="fecha_fin">
+        <div class="card-body">
+            <form method="POST" action="">
+                {{ form.csrf_token }}
+                
+                <div class="form-group mb-3">
+                    <label for="fermentacion_id" class="form-label">Fermentación Asociada:</label>
+                    {{ form.fermentacion_id(class="form-control") }}
+                    {% if form.fermentacion_id.errors %}
+                        <div class="text-danger">
+                            {% for error in form.fermentacion_id.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="tipo_barrica" class="form-label">Tipo de Barrica/Recipiente:</label>
+                    {{ form.tipo_barrica(class="form-control") }}
+                    {% if form.tipo_barrica.errors %}
+                        <div class="text-danger">
+                            {% for error in form.tipo_barrica.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="tiempo_crianza_meses" class="form-label">Tiempo de Crianza (meses):</label>
+                    {{ form.tiempo_crianza_meses(class="form-control", type="number", step="0.01") }}
+                    {% if form.tiempo_crianza_meses.errors %}
+                        <div class="text-danger">
+                            {% for error in form.tiempo_crianza_meses.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="fecha_inicio" class="form-label">Fecha de Inicio de Crianza:</label>
+                    {{ form.fecha_inicio(class="form-control", type="date") }}
+                    {% if form.fecha_inicio.errors %}
+                        <div class="text-danger">
+                            {% for error in form.fecha_inicio.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="fecha_fin" class="form-label">Fecha de Fin de Crianza:</label>
+                    {{ form.fecha_fin(class="form-control", type="date") }}
+                    {% if form.fecha_fin.errors %}
+                        <div class="text-danger">
+                            {% for error in form.fecha_fin.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="temperatura_crianza" class="form-label">Temperatura de Crianza (°C):</label>
+                    {{ form.temperatura_crianza(class="form-control", type="number", step="0.01") }}
+                    {% if form.temperatura_crianza.errors %}
+                        <div class="text-danger">
+                            {% for error in form.temperatura_crianza.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="notas" class="form-label">Notas/Observaciones:</label>
+                    {{ form.notas(class="form-control", rows="3") }}
+                    {% if form.notas.errors %}
+                        <div class="text-danger">
+                            {% for error in form.notas.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar Crianza</button>
+                <a href="{{ url_for('crianza.listar_crianza') }}" class="btn btn-secondary">Cancelar</a>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="tipo_recipient" class="form-label">Tipo de Recipiente</label>
-            <input type="text" class="form-control" name="tipo_recipient" required>
-        </div>
-        <div class="mb-3">
-            <label for="observaciones" class="form-label">Observaciones</label>
-            <textarea class="form-control" name="observaciones" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="fermentacion_id" class="form-label">ID de Fermentación</label>
-            <input type="text" class="form-control" name="fermentacion_id" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar Crianza</button>
-        <a href="{{ url_for('crianza.listar_crianza') }}" class="btn btn-secondary">Cancelar</a>
-    </form>
+    </div>
 </div>
 {% endblock %}

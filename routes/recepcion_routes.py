@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from extensions import db
 from models.recepcion import RecepcionUva
 from models.variedad import VariedadUva
-from forms import RecepcionUvaForm # Asegúrate de que tu formulario esté importado
+from forms import RecepcionUvaForm 
 import datetime
 import uuid # Para generar IDs únicos si tu modelo lo requiere y no lo hace la base de datos automáticamente
 
@@ -20,12 +20,11 @@ def nueva_recepcion():
     form = RecepcionUvaForm()
 
     if form.validate_on_submit():
-        # *** AÑADIDO: Generar un UUID para el ID explícitamente ***
+        # Generar un UUID para el ID explícitamente al CREAR uno nuevo
         new_id = str(uuid.uuid4())
 
         nueva_recepcion_obj = RecepcionUva(
-            # *** ASIGNAR EL ID GENERADO AQUÍ ***
-            id=new_id,
+            id=new_id, # Asignar el ID generado
             variedad_id=form.variedad_id.data,
             cantidad_kg=form.cantidad_kg.data,
             fecha=form.fecha.data,
@@ -39,10 +38,8 @@ def nueva_recepcion():
         except Exception as e:
             db.session.rollback() # En caso de error, deshaz la transacción
             flash(f'Error al crear la recepción: {e}', 'danger')
-            # Puedes imprimir 'e' en la consola para depuración
             print(f"Error al guardar nueva recepción: {e}")
             return render_template('recepcion/form.html', form=form, titulo="Nueva Recepción")
-
 
     # Para el método GET, o si el formulario no valida
     return render_template('recepcion/form.html', form=form, titulo="Nueva Recepción")
@@ -63,7 +60,6 @@ def editar_recepcion(id):
             flash(f'Error al actualizar la recepción: {e}', 'danger')
             print(f"Error al actualizar recepción: {e}")
             return render_template('recepcion/form.html', form=form, titulo="Editar Recepción")
-
 
     return render_template('recepcion/form.html', form=form, titulo="Editar Recepción")
 

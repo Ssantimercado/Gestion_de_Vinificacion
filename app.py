@@ -3,7 +3,7 @@
 import os
 from flask import Flask, render_template, redirect, url_for, send_from_directory
 from dotenv import load_dotenv
-from extensions import db # <--- Importamos 'db' desde extensions.py
+from extensions import db #Importamos 'db' desde extensions.py
 
 # Carga las variables de entorno desde el archivo .env
 load_dotenv()
@@ -24,7 +24,7 @@ os.makedirs(app.config['UPLOAD_FOLDER_VARIEDADES'], exist_ok=True)
 # --- Inicialización de Extensiones ---
 db.init_app(app)
 
-# --- Importar Modelos para que SQLAlchemy los registre ---
+#Importar Modelos para que SQLAlchemy los registre
 # Importa solo los módulos (archivos) de modelos aquí, no las clases individuales.
 # Esto asegura que el código de definición de cada clase se ejecute y SQLAlchemy las conozca.
 import models.variedad          # Asume que tu modelo de VariedadUva está en models/variedad.py

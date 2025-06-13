@@ -7,8 +7,7 @@ from flask_wtf.file import FileAllowed, FileRequired
 import datetime
 from extensions import db
 
-# ASEGÚRATE DE QUE ESTAS IMPORTACIONES SEAN CORRECTAS SEGÚN TU ESTRUCTURA DE ARCHIVOS
-# Basado en tus capturas de pantalla, estos son los nombres correctos de los módulos.
+
 from models.variedad import VariedadUva
 from models.recepcion import RecepcionUva
 from models.fermentacion import Fermentacion
