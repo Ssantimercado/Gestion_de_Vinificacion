@@ -1,26 +1,20 @@
+# models/embotellado_models.py
 import uuid
-from models.db import db
+from extensions import db
+import datetime
 
 class Embotellado(db.Model):
     __tablename__ = 'embotellados'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))  # Corregido para generar un UUID por defecto
-    fecha = db.Column(db.Date, nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    crianza_id = db.Column(db.String(36), db.ForeignKey('crianzas.id'), unique=True, nullable=False) # Unique si una crianza solo tiene un embotellado
+    fecha_embotellado = db.Column(db.Date, nullable=False, default=datetime.date.today)
     cantidad_botellas = db.Column(db.Integer, nullable=False)
-    crianza_id = db.Column(db.String(36), db.ForeignKey('crianzas.id'), nullable=False)
+    tipo_botella = db.Column(db.String(100), nullable=False)
+    notas = db.Column(db.Text, nullable=True)
 
     # Relación con Crianza
-    crianza = db.relationship("Crianza", back_populates="embotellados")
+    crianza = db.relationship('Crianza', back_populates='embotellado')
 
-    def __init__(self, fecha, cantidad_botellas, crianza_id):
-        self.fecha = fecha
-        self.cantidad_botellas = cantidad_botellas
-        self.crianza_id = crianza_id
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'fecha': str(self.fecha),
-            'cantidad_botellas': self.cantidad_botellas,
-            'crianza_id': self.crianza_id
-        }
+    def __repr__(self):
+        return f"<Embotellado {self.id} - Fecha: {self.fecha_embotellado} - Botellas: {self.cantidad_botellas}>"

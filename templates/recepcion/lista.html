@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Lista de Recepciones de Uva</h1>
+
+        {# Mostrar mensajes flash #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flashes">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <p><a href="{{ url_for('recepcion_bp.nueva_recepcion') }}" class="btn btn-primary">Nueva Recepción</a></p>
+
+        {% if recepciones %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th> {# Puedes añadir el ID si quieres verlo #}
+                        <th>Fecha</th>
+                        <th>Variedad</th>
+                        <th>Cantidad (kg)</th>
+                        <th>Notas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recepcion in recepciones %}
+                    <tr>
+                        <td>{{ recepcion.id }}</td>
+                        <td>{{ recepcion.fecha.strftime('%Y-%m-%d') if recepcion.fecha else '-' }}</td> {# Formatear la fecha #}
+                        <td>{{ recepcion.variedad.nombre if recepcion.variedad else 'N/A' }}</td> {# Añadido 'if recepcion.variedad else 'N/A'' #}
+                        <td>{{ recepcion.cantidad_kg }}</td>
+                        <td>{{ recepcion.notas if recepcion.notas else '-' }}</td> {# Mostrar '-' si no hay notas #}
+                        <td>
+                            <a href="{{ url_for('recepcion_bp.editar_recepcion', id=recepcion.id) }}" class="btn btn-edit">Editar</a>
+                            <form action="{{ url_for('recepcion_bp.eliminar_recepcion', id=recepcion.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que quieres eliminar esta recepción?');">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay recepciones de uva registradas todavía.</p>
+        {% endif %}
+    </div>
+{% endblock %}

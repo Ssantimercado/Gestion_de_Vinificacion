@@ -1,15 +1,14 @@
 # routes/variedad.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-import os 
-from models.db import db
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+import os
+from extensions import db
 from models.variedad import VariedadUva
-from forms.variedad import VariedadUvaForm 
+from forms import VariedadUvaForm
 from werkzeug.utils import secure_filename
 import uuid
 
 # --- CONFIGURACIÓN DE SUBIDA DE ARCHIVOS ---
-UPLOAD_FOLDER = 'static/fotos_variedades'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -22,8 +21,12 @@ def guardar_foto(file):
         filename_original = secure_filename(file.filename)
         ext = filename_original.rsplit('.', 1)[1].lower()
         filename = f"{uuid.uuid4().hex}.{ext}"
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+        # Usar la ruta de subida configurada en app.py
+        upload_path = current_app.config['UPLOAD_FOLDER_VARIEDADES']
+        os.makedirs(upload_path, exist_ok=True) # Asegura que la carpeta exista
+
+        file_path = os.path.join(upload_path, filename)
         file.save(file_path)
         return filename
     return None
@@ -54,19 +57,26 @@ def agregar_variedad():
             origen=form.origen.data
         )
 
-        # Guardar foto si fue cargada
-        if form.foto.data:
+        # Guardar foto si fue cargada y tiene un nombre de archivo
+        if form.foto.data and form.foto.data.filename != '':
             filename = guardar_foto(form.foto.data)
             if filename:
                 nueva_variedad.foto = filename
             else:
                 flash(f'Tipo de archivo no permitido. Permitidos: {", ".join(ALLOWED_EXTENSIONS)}', 'danger')
                 return render_template('variedad/form.html', form=form, title='Agregar Variedad')
+        
+        try: # Añadido bloque try-except para manejo de errores de DB
+            db.session.add(nueva_variedad)
+            db.session.commit()
+            flash('Variedad agregada exitosamente', 'success')
+            return redirect(url_for('variedad.listar_variedades'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al agregar la variedad: {e}', 'danger')
+            print(f"Error al guardar nueva variedad: {e}")
+            return render_template('variedad/form.html', form=form, title='Agregar Variedad')
 
-        db.session.add(nueva_variedad)
-        db.session.commit()
-        flash('Variedad agregada exitosamente', 'success')
-        return redirect(url_for('variedad.listar_variedades'))
 
     return render_template('variedad/form.html', form=form, title='Agregar Variedad')
 
@@ -74,7 +84,7 @@ def agregar_variedad():
 def editar_variedad(id):
     """Permite editar una variedad de uva existente."""
     variedad = VariedadUva.query.get_or_404(id)
-    form = VariedadUvaForm(obj=variedad)
+    form = VariedadUvaForm(obj=variedad) # Pre-popular el formulario con los datos existentes
 
     if form.validate_on_submit():
         # Validar nombre único si fue modificado
@@ -87,10 +97,11 @@ def editar_variedad(id):
         variedad.origen = form.origen.data
 
         # Manejo de foto nueva
-        if form.foto.data and getattr(form.foto.data, 'filename', ''):
-            # Eliminar la anterior
+        if form.foto.data and getattr(form.foto.data, 'filename', ''): # Verifica si un nuevo archivo fue subido
+            # Eliminar la anterior si existe
             if variedad.foto:
-                ruta_anterior = os.path.join(UPLOAD_FOLDER, variedad.foto)
+                upload_path = current_app.config['UPLOAD_FOLDER_VARIEDADES']
+                ruta_anterior = os.path.join(upload_path, variedad.foto)
                 if os.path.exists(ruta_anterior):
                     os.remove(ruta_anterior)
 
@@ -100,10 +111,19 @@ def editar_variedad(id):
             else:
                 flash(f'Tipo de archivo no permitido. Permitidos: {", ".join(ALLOWED_EXTENSIONS)}', 'danger')
                 return render_template('variedad/form.html', form=form, title='Editar Variedad', variedad=variedad)
+        # Si el campo de foto se dejó vacío en la edición pero había una foto antes,
+        # puedes añadir lógica aquí para borrar la foto existente si el usuario la quiere remover.
+        # Por ahora, si no se sube una nueva, la anterior se mantiene.
 
-        db.session.commit()
-        flash('Variedad actualizada exitosamente', 'success')
-        return redirect(url_for('variedad.listar_variedades'))
+        try: # Añadido bloque try-except para manejo de errores de DB
+            db.session.commit()
+            flash('Variedad actualizada exitosamente', 'success')
+            return redirect(url_for('variedad.listar_variedades'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al actualizar la variedad: {e}', 'danger')
+            print(f"Error al actualizar variedad: {e}")
+            return render_template('variedad/form.html', form=form, title='Editar Variedad', variedad=variedad)
 
     return render_template('variedad/form.html', form=form, title='Editar Variedad', variedad=variedad)
 
@@ -114,11 +134,18 @@ def eliminar_variedad(id):
 
     # Eliminar foto asociada
     if variedad.foto:
-        file_path = os.path.join(UPLOAD_FOLDER, variedad.foto)
+        upload_path = current_app.config['UPLOAD_FOLDER_VARIEDADES']
+        file_path = os.path.join(upload_path, variedad.foto)
         if os.path.exists(file_path):
             os.remove(file_path)
 
-    db.session.delete(variedad)
-    db.session.commit()
-    flash('Variedad eliminada exitosamente', 'success')
+    try: # Añadido bloque try-except para manejo de errores de DB
+        db.session.delete(variedad)
+        db.session.commit()
+        flash('Variedad eliminada exitosamente', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar la variedad: {e}', 'danger')
+        print(f"Error al eliminar variedad: {e}")
+
     return redirect(url_for('variedad.listar_variedades'))

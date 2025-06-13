@@ -1,34 +1,70 @@
-<!-- templates/recepcion/form.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>{{ titulo }}</h1>
 
-{% extends 'base.html' %}
+        {# Formulario de Recepción de Uva #}
+        <form method="POST" action="{{ url_for('recepcion_bp.' + ('nueva_recepcion' if not form.id.data else 'editar_recepcion'), id=form.id.data if form.id.data else none) }}">
+            {{ form.csrf_token }} {# Esto es importante para la seguridad con Flask-WTF #}
 
-{% block content %}
-<h1>{{ titulo }}</h1>
+            <div class="form-group">
+                {{ form.variedad_id.label }}
+                {{ form.variedad_id(class="form-control") }}
+                {% if form.variedad_id.errors %}
+                    <ul class="errors">
+                        {% for error in form.variedad_id.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
 
-<form method="POST" action="{{ url_for('recepcion_bp.' + ('nueva_recepcion' if not form.id.data else 'editar_recepcion', id=form.id.data)) }}">
-    {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.cantidad_kg.label }}
+                {{ form.cantidad_kg(class="form-control") }}
+                {% if form.cantidad_kg.errors %}
+                    <ul class="errors">
+                        {% for error in form.cantidad_kg.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
 
-    <div class="form-group">
-        <label for="variedad_id">Variedad</label>
-        {{ form.variedad_id(class="form-control") }}
+            <div class="form-group">
+                {{ form.fecha.label }}
+                {{ form.fecha(class="form-control", type="date") }} {# Aseguramos que el input sea de tipo 'date' #}
+                {% if form.fecha.errors %}
+                    <ul class="errors">
+                        {% for error in form.fecha.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.notas.label }}
+                {{ form.notas(class="form-control", rows="4") }} {# Puedes ajustar el número de filas #}
+                {% if form.notas.errors %}
+                    <ul class="errors">
+                        {% for error in form.notas.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">{{ 'Guardar' if not form.id.data else 'Actualizar' }}</button>
+            <a href="{{ url_for('recepcion_bp.lista_recepciones') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label for="cantidad_kg">Cantidad (kg)</label>
-        {{ form.cantidad_kg(class="form-control") }}
-    </div>
-
-    <div class="form-group">
-        <label for="fecha">Fecha de Recepción</label>
-        {{ form.fecha(class="form-control") }}
-    </div>
-
-    <div class="form-group">
-        <label for="notas">Notas</label>
-        {{ form.notas(class="form-control") }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">{{ 'Guardar' if not form.id.data else 'Actualizar' }}</button>
-</form>
-
-{% endblock %}
+</body>
+</html>

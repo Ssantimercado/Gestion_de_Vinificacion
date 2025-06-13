@@ -1,34 +1,25 @@
+# models/crianza_models.py
 import uuid
-from models.db import db
+from extensions import db
+import datetime
 
 class Crianza(db.Model):
     __tablename__ = 'crianzas'
 
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))  # Corregido para generar un UUID por defecto
-    fecha_inicio = db.Column(db.Date, nullable=False)
-    fecha_fin = db.Column(db.Date)
-    tipo_recipient = db.Column(db.String(100), nullable=False)
-    observaciones = db.Column(db.Text)
-    fermentacion_id = db.Column(db.String(36), db.ForeignKey('fermentaciones.id'), nullable=False)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    fermentacion_id = db.Column(db.String(36), db.ForeignKey('fermentaciones.id'), unique=True, nullable=False) # Unique si una fermentación solo tiene una crianza
+    tipo_barrica = db.Column(db.String(100), nullable=False)
+    tiempo_crianza_meses = db.Column(db.Numeric(5, 2), nullable=False)
+    fecha_inicio = db.Column(db.Date, nullable=False, default=datetime.date.today)
+    fecha_fin = db.Column(db.Date, nullable=True)
+    temperatura_crianza = db.Column(db.Numeric(5, 2), nullable=True)
+    notas = db.Column(db.Text, nullable=True)
 
-    # Relación con Fermentación
-    fermentacion = db.relationship("Fermentacion", back_populates="crianza")
+    # Relación con Fermentacion
+    fermentacion = db.relationship('Fermentacion', back_populates='crianza')
+
     # Relación con Embotellado
-    embotellados = db.relationship("Embotellado", back_populates="crianza", cascade="all, delete-orphan")
+    embotellado = db.relationship('Embotellado', back_populates='crianza', uselist=False, cascade="all, delete-orphan")
 
-    def __init__(self, fecha_inicio, tipo_recipient, fermentacion_id, fecha_fin=None, observaciones=None):
-        self.fecha_inicio = fecha_inicio
-        self.fecha_fin = fecha_fin
-        self.tipo_recipient = tipo_recipient
-        self.observaciones = observaciones
-        self.fermentacion_id = fermentacion_id
-
-    def serialize(self):
-        return {
-            'id': self.id,
-            'fecha_inicio': str(self.fecha_inicio),
-            'fecha_fin': str(self.fecha_fin) if self.fecha_fin else None,
-            'tipo_recipient': self.tipo_recipient,
-            'observaciones': self.observaciones,
-            'fermentacion_id': self.fermentacion_id
-        }
+    def __repr__(self):
+        return f"<Crianza {self.id} - Tipo: {self.tipo_barrica} - Inicio: {self.fecha_inicio}>"

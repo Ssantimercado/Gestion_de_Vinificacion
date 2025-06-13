@@ -1,13 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from models.db import db
+from extensions import db  # ¡Importante! Aseguramos que use la misma instancia de DB
 from models.crianza_models import Crianza
 from models.variedad import VariedadUva
 from models.fermentacion import Fermentacion
+from models.recepcion import RecepcionUva # ¡¡¡NUEVO/CORREGIDO: Necesario para el join en buscar_crianza!!!
 import datetime
 
-crianza_bp = Blueprint('crianza', __name__)
+# Definimos el Blueprint con el url_prefix correcto
+crianza_bp = Blueprint('crianza', __name__, url_prefix='/crianza')
 
-@crianza_bp.route('/crianza/nueva', methods=['GET', 'POST'])
+@crianza_bp.route('/nueva', methods=['GET', 'POST'])
 def crear_crianza():
     if request.method == 'POST':
         fecha_inicio = request.form['fecha_inicio']
@@ -26,11 +28,13 @@ def crear_crianza():
 
         db.session.add(nueva_crianza)
         db.session.commit()
-        return redirect(url_for('crianza.listar_crianza'))  # Ruta que muestra la lista
+        return redirect(url_for('crianza.listar_crianza'))
 
-    return render_template('crianza/form.html')
+    # Necesitas pasar las fermentaciones para que el campo Select de Fermentacion_id funcione en el formulario
+    fermentaciones = Fermentacion.query.all()
+    return render_template('crianza/form.html', fermentaciones=fermentaciones)
 
-@crianza_bp.route('/crianza')
+@crianza_bp.route('/')
 def listar_crianza():
     crianzas = Crianza.query.all()
     return render_template('crianza/lista.html', crianzas=crianzas)
@@ -45,13 +49,13 @@ def buscar_crianza():
         tipo_recipient = request.form.get('tipo_recipient', '')
         variedad_id = request.form.get('variedad_id', '')
 
-        # Filtrado
-        query = Crianza.query.join(Crianza.fermentacion).join(Fermentacion.variedad)
+        # Filtrado: AHORA RecepcionUva está importada
+        query = Crianza.query.join(Crianza.fermentacion).join(Fermentacion.recepcion).join(RecepcionUva.variedad)
 
         if tipo_recipient:
             query = query.filter(Crianza.tipo_recipient.ilike(f"%{tipo_recipient}%"))
         if variedad_id:
-            query = query.filter(Fermentacion.variedad_id == variedad_id)
+            query = query.filter(RecepcionUva.variedad_id == variedad_id)
 
         resultados = query.all()
 

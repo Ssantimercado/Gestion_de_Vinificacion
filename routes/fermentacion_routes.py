@@ -4,19 +4,21 @@ from wtforms import IntegerField, DateField, TextAreaField, SelectField
 from wtforms.validators import DataRequired
 from models.fermentacion import Fermentacion
 from models.recepcion import RecepcionUva
-from models.db import db
+from extensions import db # ¡IMPORTANTE! Aseguramos que use la misma instancia de DB
+
 
 # Definir el formulario dentro de este archivo
 class FermentacionForm(FlaskForm):
-    recepcion_id = SelectField('Recepción', coerce=str, validators=[DataRequired()])  # Aseguramos que reciba un str (UUID)
+    recepcion_id = SelectField('Recepción', coerce=str, validators=[DataRequired()])
     fecha_inicio = DateField('Fecha de Inicio', validators=[DataRequired()])
     fecha_fin = DateField('Fecha de Fin', validators=[DataRequired()])
     temperatura = IntegerField('Temperatura (°C)', validators=[DataRequired()])
     ph = IntegerField('pH', validators=[DataRequired()])
-    notas = TextAreaField('Notas')
+    notas = TextAreaField('Notas') # Asegúrate que tu modelo Fermentacion tenga este campo si lo usas
+
 
 # Blueprint para las rutas de Fermentación
-fermentacion_bp = Blueprint('fermentacion_bp', __name__, url_prefix='/fermentaciones')
+fermentacion_bp = Blueprint('fermentacion_bp', __name__, url_prefix='/fermentacion') # ¡CAMBIADO el url_prefix!
 
 # Ruta para listar todas las fermentaciones
 @fermentacion_bp.route('/')
@@ -39,6 +41,8 @@ def nueva_fermentacion():
             temperatura=form.temperatura.data,
             ph=form.ph.data,
             recepcion_id=form.recepcion_id.data
+            # Si tienes 'notas' en tu modelo Fermentacion y en el formulario, añádelo aquí:
+            # notas=form.notas.data
         )
         db.session.add(nueva)
         db.session.commit()
@@ -62,6 +66,8 @@ def editar_fermentacion(id):
         fermentacion.temperatura = form.temperatura.data
         fermentacion.ph = form.ph.data
         fermentacion.recepcion_id = form.recepcion_id.data
+        # Si tienes 'notas' en tu modelo Fermentacion y en el formulario, añádelo aquí:
+        # fermentacion.notas = form.notas.data
         db.session.commit()
         flash("Fermentación actualizada correctamente", "success")
         return redirect(url_for('fermentacion_bp.lista_fermentaciones'))

@@ -1,28 +1,24 @@
+# models/recepcion.py
 import uuid
-from datetime import datetime
-from models.db import db
-from flask_sqlalchemy import SQLAlchemy
-from models.variedad import VariedadUva  # Importa correctamente el modelo
-
-db = SQLAlchemy()
+from extensions import db
+import datetime
 
 class RecepcionUva(db.Model):
     __tablename__ = 'recepciones'
-    id = db.Column(db.String(36), primary_key=True, default=str(uuid.uuid4()))  # UUID como clave primaria
-    fecha = db.Column(db.Date, nullable=False)
-    cantidad_kg = db.Column(db.Integer, nullable=False)
-    notas = db.Column(db.Text)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    variedad_id = db.Column(db.String(36), db.ForeignKey('variedades.id'), nullable=False)
+    cantidad_kg = db.Column(db.Numeric(10, 2), nullable=False)
+    fecha = db.Column(db.Date, nullable=False, default=datetime.date.today)
+    notas = db.Column(db.Text, nullable=True)
 
-    variedad_id = db.Column(db.String(36), db.ForeignKey('variedades.id'))  # Relación con UUID de VariedadUva
-    variedad = db.relationship('VariedadUva', backref='recepciones')  # Relación inversa
-    
-    fermentaciones = db.relationship('Fermentacion', back_populates='recepcion', cascade="all, delete-orphan")
+    # Relación con VariedadUva
+    variedad = db.relationship('VariedadUva', backref=db.backref('recepciones', lazy=True))
 
-    def __init__(self, fecha, cantidad_kg, notas, variedad_id):
-        self.fecha = fecha
-        self.cantidad_kg = cantidad_kg
-        self.notas = notas
-        self.variedad_id = variedad_id
+    # Relación inversa con Fermentacion
+    # 'Fermentacion' es el nombre de la CLASE del modelo Fermentacion
+    # back_populates='recepcion' debe coincidir con el nombre de la relación en el modelo Fermentacion
+    fermentaciones = db.relationship('Fermentacion', back_populates='recepcion', lazy=True, cascade="all, delete-orphan")
+
 
     def __repr__(self):
-        return f'<RecepcionUva {self.id} - {self.fecha} - {self.variedad.nombre}>'
+        return f"<RecepcionUva {self.id} - {self.cantidad_kg}kg de {self.variedad.nombre if self.variedad else 'N/A'}>"
